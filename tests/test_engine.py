@@ -31,11 +31,17 @@ def test_check_collision_when_position_doesnt_collide():
 def test_is_within_bounds_inside_board():
     assert is_within_bounds((4, 5), (10, 10)) == True
 
-def test_is_within_bounds_outside_board():
+def test_is_within_bounds_outside_board_with_positive_x_and_y():
     assert is_within_bounds((11, 5), (10, 10)) == False
 
 def test_is_within_bounds_on_edge():
     assert is_within_bounds((0, 0), (10, 10)) == True
+
+def test_is_within_bounds_outside_board_with_negative_x():
+    assert is_within_bounds((-10, 0), (10, 10)) == False
+
+def test_is_within_bounds_outside_board_with_negative_y():
+    assert is_within_bounds((3, -1), (10, 10)) == False
 
 
 # increase_speed tests:

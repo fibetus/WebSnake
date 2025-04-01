@@ -1,1 +1,1 @@
-from .engine_core import move_snake, check_collision, is_within_bounds
+from .engine_core import move_snake, check_collision, is_within_bounds, increase_speed

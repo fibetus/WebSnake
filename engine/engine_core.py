@@ -17,10 +17,10 @@ def check_collision(position1, position2):
 def is_within_bounds(position, board_size):
     x, y = position
     width, height = board_size
-    return x >= 0 and x < width and y >= 0 and y < height
+    return 0 <= x < width and 0 <= y < height
 
 def increase_speed(score):
-    startingSpeed = 1
-    maxSpeed = 2
-    speed = startingSpeed + (score // 3) * 0.1
-    return min(speed, maxSpeed)
+    starting_speed = 1
+    max_speed = 2
+    current_speed = starting_speed + (score // 3) * 0.1
+    return min(current_speed, max_speed)

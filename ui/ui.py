@@ -119,6 +119,24 @@ class UI:
             speed_rect.top = self.grid_size * self.cell_size + 10
             screen.blit(speed_text, speed_rect)
 
+            # Game over text
+            if self.game.game_over:
+                # Semi-transparent overlay
+                overlay = pygame.Surface((self.screen_width, self.screen_height))
+                overlay.set_alpha(150)
+                overlay.fill(self.BLACK)
+                screen.blit(overlay, (0, 0))
+
+                # Game over message
+                game_over_text = font.render('GAME OVER!', True, self.WHITE)
+                text_rect = game_over_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 20))
+                screen.blit(game_over_text, text_rect)
+
+                # Restart instructions
+                restart_text = font.render('Press R to restart or Q to quit', True, self.WHITE)
+                restart_rect = restart_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 20))
+                screen.blit(restart_text, restart_rect)
+
             # Update the display
             pygame.display.flip()
 

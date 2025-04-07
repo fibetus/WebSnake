@@ -48,6 +48,21 @@ class UI:
             # Draw the grid
             self._draw_grid(screen)
 
+            # Draw the snake
+            for segment in self.game.snake:
+                x, y = segment
+                # Convert grid coordinates to pixel coordinates
+                rect = pygame.Rect(
+                    x * self.cell_size,
+                    y * self.cell_size,
+                    self.cell_size,
+                    self.cell_size
+                )
+                pygame.draw.rect(screen, self.GREEN, rect)
+
+                # Draw a darker border for the snake segment
+                pygame.draw.rect(screen, (0, 200, 0), rect, 1)
+
             # Update the display
             pygame.display.flip()
 

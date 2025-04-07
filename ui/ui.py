@@ -73,6 +73,17 @@ class UI:
             )
             pygame.draw.rect(screen, self.RED, food_rect)
 
+            # Draw score
+            score_text = font.render(f'Score: {self.game.score}', True, self.WHITE)
+            screen.blit(score_text, (10, self.grid_size * self.cell_size + 10))
+
+            # Draw speed info
+            speed_text = font.render(f'Speed: {self.game.speed:.1f}x', True, self.WHITE)
+            speed_rect = speed_text.get_rect()
+            speed_rect.right = self.screen_width - 10
+            speed_rect.top = self.grid_size * self.cell_size + 10
+            screen.blit(speed_text, speed_rect)
+
             # Update the display
             pygame.display.flip()
 

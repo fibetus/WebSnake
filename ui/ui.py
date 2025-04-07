@@ -36,12 +36,47 @@ class UI:
         screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption('Snake Game')
 
+        # Set up the clock for snake moves
+        clock = pygame.time.Clock()
 
         # Set up font for score
         font = pygame.font.SysFont(None, 36)
 
         # Game loop
         while True:
+            current_time = pygame.time.get_ticks()
+
+            # Handle events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        self.game.change_direction("up")
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        self.game.change_direction("down")
+                    elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        self.game.change_direction("left")
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        self.game.change_direction("right")
+                    elif event.key == pygame.K_r and self.game.game_over:
+                        # Reset game
+                        self.game.__init__(board_size=(self.grid_size, self.grid_size))
+                    elif event.key == pygame.K_q:
+                        pygame.quit()
+                        sys.exit()
+
+            # Update game state if game is not over and enough time has passed
+            if not self.game.game_over:
+                # Calculate time to wait based on game speed
+                self.update_interval = int(1000 / self.game.speed)
+
+                # Check if it's time to update
+                if current_time - self.last_update_time >= self.update_interval:
+                    self.game.update()
+                    self.last_update_time = current_time
+
             # Fill the screen with black
             screen.fill(self.BLACK)
 
@@ -86,6 +121,9 @@ class UI:
 
             # Update the display
             pygame.display.flip()
+
+            # Cap the frame rate
+            clock.tick(60)
 
 
     def _draw_grid(self, screen):

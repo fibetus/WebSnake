@@ -63,6 +63,16 @@ class UI:
                 # Draw a darker border for the snake segment
                 pygame.draw.rect(screen, (0, 200, 0), rect, 1)
 
+            # Draw the food
+            fx, fy = self.game.food
+            food_rect = pygame.Rect(
+                fx * self.cell_size,
+                fy * self.cell_size,
+                self.cell_size,
+                self.cell_size
+            )
+            pygame.draw.rect(screen, self.RED, food_rect)
+
             # Update the display
             pygame.display.flip()
 

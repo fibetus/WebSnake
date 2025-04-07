@@ -68,6 +68,8 @@ def test_change_direction_invalid():
     g.change_direction("up")
     assert g.direction == "down"
 
+
+# update tests:
 def test_update_game_over():
     g = Game()
     g.game_over = True
@@ -92,12 +94,16 @@ def test_update_eat_food():
     assert g.score == 1
     assert len(g.snake) == 2
 
+
+# spawn_food tests:
 def test_spawn_food_not_on_snake():
     g = Game()
     g.snake = [(x, 0) for x in range(10)]
     g.spawn_food()
     assert g.food not in g.snake
 
+
+# full game scenario tests:
 def test_snake_eat_food_after_few_moves():
     g = Game(board_size=(10, 10), initial_position=(5, 5), direction="right")
     g.food = (6, 7)

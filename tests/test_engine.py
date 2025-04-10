@@ -1,5 +1,6 @@
 import pytest
 from engine import move_snake, check_collision, is_within_bounds, increase_speed, Game
+from data import PlayerData
 
 # move_snake tests:
 def test_move_snake_up():
@@ -114,3 +115,31 @@ def test_snake_eat_food_after_few_moves():
     assert g.snake[0] == (6, 7)
     assert g.score == 1
     assert len(g.snake) == 2
+
+
+# testing the initialization of PlayerData
+def test_player_data_init():
+    pd = PlayerData()
+    assert pd.players == []
+
+# testing add_player method
+def test_add_player_with_default_score():
+    pd = PlayerData()
+    pd.add_player("TestPlayer")
+    assert len(pd.players) == 1
+    assert pd.players[0]["name"] == "TestPlayer"
+    assert pd.players[0]["score"] == 0
+
+def test_add_player_with_custom_score():
+    pd = PlayerData()
+    pd.add_player("TestPlayer", 100)
+    assert len(pd.players) == 1
+    assert pd.players[0]["name"] == "TestPlayer"
+    assert pd.players[0]["score"] == 100
+
+def test_add_multiple_players():
+    pd = PlayerData()
+    pd.add_player("Player1")
+    pd.add_player("Player2", 50)
+    pd.add_player("Player3", 75)
+    assert len(pd.players)

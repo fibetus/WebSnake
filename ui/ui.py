@@ -3,6 +3,7 @@ import sys
 import time
 from engine import Game
 
+
 class UI:
     def __init__(self, game=None):
         # Setup pygame
@@ -313,8 +314,12 @@ class UI:
                 text_rect = game_over_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 20))
                 screen.blit(game_over_text, text_rect)
 
-                # Restart instructions
-                restart_text = self.font.render('Press R to restart or Q to quit', True, self.WHITE)
+                # Adjust font size for restart instructions based on screen width
+                font_size = max(14, min(36, int(self.screen_width / 15)))
+                restart_font = pygame.font.SysFont(None, font_size)
+
+                # Restart instructions with adjusted font
+                restart_text = restart_font.render('Press R to restart or Q to quit', True, self.WHITE)
                 restart_rect = restart_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 20))
                 screen.blit(restart_text, restart_rect)
 

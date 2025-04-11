@@ -18,6 +18,7 @@ This is a simple implementation of the classic Snake game where you control a sn
 
 - Python 3.6+
 - Pygame library
+- Pytest library
 
 ## Installation
 
@@ -29,7 +30,7 @@ cd snake-game
 
 2. Install the required dependencies:
 ```bash
-pip install pygame pytest
+pip install -r requirements.txt
 ```
 
 ## How to Run
@@ -58,7 +59,9 @@ python main.py
 - `engine_core.py`: Contains the core game logic
 - `ui.py`: Contains the Pygame user interface implementation
 - `main.py`: Entry point that connects game logic with UI
+- `player_data.py`: Contains the logic for saving data
 - `test_engine.py`: Contains tests for `engine_core.py`
+- `test_player_data.py`: Contains tests for `player_data.py`
 
 ## Testing
 

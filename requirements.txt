@@ -1,0 +1,5 @@
+# for UI handling
+pygame~=2.6.1
+
+# for testing
+pytest~=8.3.5

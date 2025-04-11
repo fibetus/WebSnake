@@ -114,7 +114,7 @@ class UI:
                             self.player_name = self.player_name[:-1]
                         elif event.key == pygame.K_RETURN:
                             name_input_active = False
-                        elif len(self.player_name) < 15:  # Limit name length
+                        elif len(self.player_name) < 10:  # Limit name length
                             if event.unicode.isalnum() or event.unicode.isspace():
                                 self.player_name += event.unicode
 
@@ -282,12 +282,16 @@ class UI:
             )
             pygame.draw.rect(screen, self.RED, food_rect)
 
-            # Draw score and player name
-            score_text = self.font.render(f'Score: {self.game.score}', True, self.WHITE)
+            # Adjust font size for score and player name based on screen width
+            font_size = max(24, min(36, int(self.screen_width / 15)))
+            game_info_font = pygame.font.SysFont(None, font_size)
+
+            # Draw score with adjusted font
+            score_text = game_info_font.render(f'Score: {self.game.score}', True, self.WHITE)
             screen.blit(score_text, (10, self.grid_size * self.cell_size + 10))
 
-            # Draw player name
-            player_text = self.font.render(f'Player: {self.player_name}', True, self.WHITE)
+            # Draw player name with adjusted font
+            player_text = game_info_font.render(f'Player: {self.player_name}', True, self.WHITE)
             player_rect = player_text.get_rect()
             player_rect.right = self.screen_width - 10
             player_rect.top = self.grid_size * self.cell_size + 10

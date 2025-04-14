@@ -5,7 +5,17 @@ from engine import Game
 
 
 class UI:
+    """
+    Class for User Interface to interact with game screen.
+    """
+
     def __init__(self, game=None):
+        """
+        Initialize the UI with Game object.
+        Args:
+            game: Instance of Game class
+        """
+
         # Setup pygame
         pygame.init()
         pygame.font.init()
@@ -41,6 +51,7 @@ class UI:
         # Update timing
         self.last_update_time = 0
         self.update_interval = 1000  # milliseconds (will be adjusted by game speed)
+        self.game_start_time = 0
 
         # Text input variables
         self.active_input = None
@@ -49,6 +60,11 @@ class UI:
         self.cursor_timer = 0
 
     def show_setup_scene(self, player_data):
+        """
+        Provides the setup scene for the game.
+        Args:
+            player_data: Player data
+        """
         self.player_data = player_data
         screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption('Snake Game - Setup')
@@ -185,7 +201,9 @@ class UI:
             clock.tick(60)
 
     def setup_game(self):
-        """Set up the game based on user selections"""
+        """
+        Set up the game based on user selections
+        """
         # Calculate cell size based on screen dimensions and grid size
         self.cell_size = min(500 // self.grid_size, 50)  # Max cell size of 50px
 
@@ -200,12 +218,18 @@ class UI:
             direction="right"
         )
 
-        # Store player info
+        # Store player info in database
         if self.player_data:
-            self.player_data.add_player(self.player_name)
+            # Pass map_size to the database
+            self.player_data.add_player(self.player_name, 0, self.grid_size)
+            # Start timer for game duration tracking
+            self.player_data.start_game_timer()
+            self.game_start_time = time.time()
 
     def start(self):
-        """Start the main game loop"""
+        """
+        Start the main game loop
+        """
         if not self.game:
             raise ValueError("Game must be set up before starting")
 
@@ -216,6 +240,9 @@ class UI:
         # Set up the clock for snake moves
         clock = pygame.time.Clock()
 
+        # Boolean for saving progress
+        is_saved = False
+
         # Game loop
         while True:
             current_time = pygame.time.get_ticks()
@@ -223,6 +250,13 @@ class UI:
             # Handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    # Save score before quitting
+                    if self.player_data and not self.game.game_over:
+                        self.player_data.save_game_result(
+                            self.player_name,
+                            self.game.score,
+                            self.grid_size
+                        )
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
@@ -237,7 +271,19 @@ class UI:
                     elif event.key == pygame.K_r and self.game.game_over:
                         # Reset game
                         self.game.__init__(board_size=(self.grid_size, self.grid_size))
+                        # Reset timer for the new game
+                        if self.player_data:
+                            self.player_data.start_game_timer()
+                            self.game_start_time = time.time()
+                            is_saved = False
                     elif event.key == pygame.K_q:
+                        # Save score before quitting
+                        if self.player_data and not self.game.game_over:
+                            self.player_data.save_game_result(
+                                self.player_name,
+                                self.game.score,
+                                self.grid_size
+                            )
                         pygame.quit()
                         sys.exit()
 
@@ -299,13 +345,19 @@ class UI:
 
             # Game over text
             if self.game.game_over:
-                # Update player score if game is over
+                # Save final score to database
                 if self.player_data:
-                    # Update the player's score in the player data
-                    for player in self.player_data.players:
-                        if player["name"] == self.player_name:
-                            player["score"] = max(player["score"], self.game.score)
-                            break
+                    # Calculate game duration
+                    game_duration = time.time() - self.game_start_time
+
+                    if not is_saved:
+                        # Save result with map size
+                        self.player_data.save_game_result(
+                            self.player_name,
+                            self.game.score,
+                            self.grid_size
+                        )
+                        is_saved = True
 
                 # Semi-transparent overlay
                 overlay = pygame.Surface((self.screen_width, self.screen_height))

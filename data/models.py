@@ -4,7 +4,9 @@ from bson.objectid import ObjectId
 
 
 class Player:
-    """Data model for a player."""
+    """
+    Data model for a player.
+    """
 
     def __init__(self, name: str, map_size: int, score: int = 0,
                  created_by: str = "user", created_at: datetime = None,
@@ -18,7 +20,9 @@ class Player:
         self.updated_at = updated_at
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert player to dictionary for database storage."""
+        """
+        Convert player to dictionary for database storage.
+        """
         data = {
             "name": self.name,
             "map_size": self.map_size,
@@ -35,7 +39,9 @@ class Player:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Player':
-        """Create Player instance from dictionary."""
+        """
+        Create Player instance from dictionary.
+        """
         id_str = str(data.get("_id")) if data.get("_id") else None
         return cls(
             id=id_str,
@@ -49,7 +55,9 @@ class Player:
 
 
 class GameResult:
-    """Data model for a game result."""
+    """
+    Data model for a game result.
+    """
 
     def __init__(self, player_name: str, map_size: int, score: int,
                  duration: float, player_id=None, created_by: str = "user",
@@ -64,7 +72,9 @@ class GameResult:
         self.date = date or datetime.now()
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert game result to dictionary for database storage."""
+        """
+        Convert game result to dictionary for database storage.
+        """
         data = {
             "player_name": self.player_name,
             "map_size": self.map_size,
@@ -85,7 +95,9 @@ class GameResult:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'GameResult':
-        """Create GameResult instance from dictionary."""
+        """
+        Create GameResult instance from dictionary.
+        """
         id_str = str(data.get("_id")) if data.get("_id") else None
         player_id_str = str(data.get("player_id")) if data.get("player_id") else None
 

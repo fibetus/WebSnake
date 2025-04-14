@@ -1,5 +1,4 @@
 import argparse
-from engine import move_snake, check_collision, is_within_bounds, increase_speed, Game
 from ui import UI
 from data import PlayerData
 
@@ -7,6 +6,8 @@ from data import PlayerData
 def main():
     parser = argparse.ArgumentParser(description="Simple Snake Game in Python")
     parser.add_argument("--history", help="Displays the history of Snake Game", action="store_true")
+    parser.add_argument("--scores", help="Displays high scores from the database", action="store_true")
+    parser.add_argument("--map-size", type=int, help="Filter high scores by map size (optional)")
 
     args = parser.parse_args()
     if args.history:
@@ -17,6 +18,28 @@ def main():
 
     # Create player data storage
     player_data = PlayerData()
+
+    # Handling --scores argument for leaderboard
+    if args.scores:
+        # Display high scores from database
+        map_filter = args.map_size
+        high_scores = player_data.get_high_scores(limit=10, map_size=map_filter)
+
+        print("\n===== HIGH SCORES =====")
+        if map_filter:
+            print(f"Filtered by map size: {map_filter}x{map_filter}")
+        else:
+            print("All map sizes")
+
+        if not high_scores:
+            print("No scores found!")
+        else:
+            for i, player in enumerate(high_scores, 1):
+                map_size = player.get('map_size', 'N/A')
+                print(f"{i}. {player['name']}: {player['score']} points (Map: {map_size}x{map_size if map_size != 'N/A' else 'N/A'})")
+
+        print("=======================\n")
+        return
 
     # Create UI without a game instance yet (we'll create it after setup)
     ui = UI()

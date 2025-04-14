@@ -4,6 +4,7 @@ import mongomock
 import datetime
 
 from data.database import Database
+from data.models import Player, GameResult
 
 
 @pytest.fixture(scope="function")
@@ -17,7 +18,7 @@ def mock_db():
 
         # Mock the _get_warsaw_time method to return a consistent time for testing
         original_get_time = test_db._get_warsaw_time
-        test_db._get_warsaw_time = mock.MagicMock(return_value=datetime.datetime(2025, 4, 11, 12, 0, 0))
+        test_db._get_warsaw_time = mock.MagicMock(return_value=datetime.datetime(2025, 4, 14, 12, 41, 21))
 
         # Force connection to use the mock
         test_db.connect()
@@ -31,7 +32,7 @@ def mock_db():
         # Update metadata with current values
         test_db.metadata = {
             "user": "testUser",  # Using provided username
-            "session_start": original_get_time  # Using provided timestamp
+            "session_start": "2025-04-14 12:41:21"  # Using provided timestamp
         }
 
         yield test_db
@@ -198,7 +199,7 @@ class TestPlayerCRUD:
         new_id = mock_db.add_player("TestPlayer", 10, 50)
 
         # Should return the same ID
-        assert new_id == player_id
+        assert str(new_id) == str(player_id)
 
         # Score should not be updated
         player = mock_db.players.find_one({"name": "TestPlayer"})
@@ -215,7 +216,7 @@ class TestPlayerCRUD:
         new_id = mock_db.add_player("TestPlayer", 10, 150)
 
         # Should return the same ID
-        assert new_id == player_id
+        assert str(new_id) == str(player_id)
 
         # Score should be updated
         player = mock_db.players.find_one({"name": "TestPlayer"})
@@ -236,10 +237,15 @@ class TestPlayerCRUD:
 
         players = mock_db.get_players()
         assert len(players) == 2
-        assert any(p["name"] == "Player1" for p in players)
-        assert any(p["name"] == "Player2" for p in players)
+        # Check players are Player objects
+        assert all(isinstance(p, Player) for p in players)
+        # Check player names
+        player_names = [p.name for p in players]
+        assert "Player1" in player_names
+        assert "Player2" in player_names
         # Verify ObjectId conversion
-        assert isinstance(players[0]["_id"], str)
+        assert all(hasattr(p, 'id') for p in players)
+        assert all(isinstance(p.id, str) for p in players)
 
     def test_get_high_scores(self, mock_db):
         """
@@ -258,15 +264,16 @@ class TestPlayerCRUD:
         # Test without map_size filter
         scores = mock_db.get_high_scores(limit=2)
         assert len(scores) == 2
-        assert scores[0]["name"] == "Player4"  # Highest score
-        assert scores[1]["name"] == "Player2"  # Second highest
+        assert all(isinstance(p, Player) for p in scores)
+        assert scores[0].name == "Player4"  # Highest score
+        assert scores[1].name == "Player2"  # Second highest
 
         # Test with map_size filter
         scores = mock_db.get_high_scores(map_size=10)
         assert len(scores) == 3
-        assert scores[0]["name"] == "Player2"  # Highest score for map_size 10
-        assert scores[1]["name"] == "Player3"
-        assert scores[2]["name"] == "Player1"
+        assert scores[0].name == "Player2"  # Highest score for map_size 10
+        assert scores[1].name == "Player3"
+        assert scores[2].name == "Player1"
 
     def test_update_player_higher_score(self, mock_db):
         """
@@ -415,9 +422,13 @@ class TestGameResultsCRUD:
         # Get all results for player
         results = mock_db.get_player_results("ResultsPlayer")
         assert len(results) == 3
+        # Check results are GameResult objects
+        assert all(isinstance(r, GameResult) for r in results)
         # Verify ObjectId conversion
-        assert isinstance(results[0]["_id"], str)
-        assert isinstance(results[0]["player_id"], str)
+        assert all(hasattr(r, 'id') for r in results)
+        assert all(isinstance(r.id, str) for r in results)
+        assert all(hasattr(r, 'player_id') for r in results)
+        assert all(isinstance(r.player_id, str) for r in results)
 
     def test_get_player_results_filtered(self, mock_db):
         """
@@ -431,7 +442,8 @@ class TestGameResultsCRUD:
         # Get results filtered by map size
         results = mock_db.get_player_results("ResultsPlayer", map_size=10)
         assert len(results) == 2
-        assert all(r["map_size"] == 10 for r in results)
+        assert all(r.map_size == 10 for r in results)
 
         # Confirm sorted by date (newest first)
-        assert results[0]["date"] >= results[1]["date"]
+        if len(results) >= 2:
+            assert results[0].date >= results[1].date

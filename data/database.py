@@ -2,6 +2,8 @@ from pymongo import MongoClient
 from typing import List, Dict, Any, Optional
 import datetime
 from zoneinfo import ZoneInfo
+from bson.objectid import ObjectId
+from .models import Player, GameResult
 
 
 class Database:
@@ -22,7 +24,7 @@ class Database:
         # Store metadata about the current session
         self.metadata = {
             "user": "user",  # Updated with current user login
-            "session_start": "2025-04-11 12:14:20"  # Updated with current timestamp
+            "session_start": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
 
     def connect(self) -> bool:
@@ -99,49 +101,52 @@ class Database:
             if existing:
                 # Update the existing player if the new score is higher
                 if score > existing.get("score", 0):
+                    existing_player = Player.from_dict(existing)
+                    existing_player.score = score
+                    existing_player.updated_at = self._get_warsaw_time()
+
                     self.players.update_one(
-                        {"_id": existing["_id"]},
+                        {"_id": ObjectId(existing_player.id)},
                         {
-                            "$set": {"score": score},
-                            "$currentDate": {"updated_at": True}
+                            "$set": {"score": score, "updated_at": existing_player.updated_at}
                         }
                     )
-                return str(existing["_id"])
+                return existing.get("_id")
+
+            # Create new player model
+            player = Player(
+                name=name,
+                map_size=map_size,
+                score=score,
+                created_by=self.metadata["user"],
+                created_at=self._get_warsaw_time()
+            )
 
             # Insert new player
-            result = self.players.insert_one({
-                "name": name,
-                "map_size": map_size,
-                "score": score,
-                "created_by": self.metadata["user"],
-                "created_at": self._get_warsaw_time()  # Use Warsaw time
-            })
+            result = self.players.insert_one(player.to_dict())
             return str(result.inserted_id)
         except Exception as e:
             print(f"Error adding player: {e}")
             return None
 
-    def get_players(self) -> List[Dict[str, Any]]:
+    def get_players(self) -> List[Player]:
         """
         Get all players from the database.
 
         Returns:
-            List[Dict]: List of player dictionaries
+            List[Player]: List of Player objects
         """
         if not self.is_connected and not self.connect():
             return []
 
         try:
-            players = list(self.players.find())
-            # Convert ObjectId to string for JSON serialization
-            for player in players:
-                player["_id"] = str(player["_id"])
-            return players
+            players_data = list(self.players.find())
+            return [Player.from_dict(player_data) for player_data in players_data]
         except Exception as e:
             print(f"Error getting players: {e}")
             return []
 
-    def get_high_scores(self, limit: int = 10, map_size: Optional[int] = None) -> List[Dict[str, Any]]:
+    def get_high_scores(self, limit: int = 10, map_size: Optional[int] = None) -> List[Player]:
         """
         Get top players by score, optionally filtered by map size.
 
@@ -150,7 +155,7 @@ class Database:
             map_size: If provided, filter scores by this map size
 
         Returns:
-            List[Dict]: List of top players sorted by score
+            List[Player]: List of top players sorted by score
         """
         if not self.is_connected and not self.connect():
             return []
@@ -159,11 +164,8 @@ class Database:
             # Filter by map size if provided
             query = {"map_size": map_size} if map_size is not None else {}
 
-            top_players = list(self.players.find(query).sort("score", -1).limit(limit))
-            # Convert ObjectId to string for JSON serialization
-            for player in top_players:
-                player["_id"] = str(player["_id"])
-            return top_players
+            top_players_data = list(self.players.find(query).sort("score", -1).limit(limit))
+            return [Player.from_dict(player_data) for player_data in top_players_data]
         except Exception as e:
             print(f"Error getting high scores: {e}")
             return []
@@ -257,32 +259,34 @@ class Database:
                     )
             else:
                 # Create new player
-                insert_result = self.players.insert_one({
-                    "name": player_name,
-                    "map_size": map_size,
-                    "score": score,
-                    "created_by": self.metadata["user"],
-                    "created_at": self._get_warsaw_time()  # Use Warsaw time
-                })
+                new_player = Player(
+                    name=player_name,
+                    map_size=map_size,
+                    score=score,
+                    created_by=self.metadata["user"],
+                    created_at=self._get_warsaw_time()
+                )
+                insert_result = self.players.insert_one(new_player.to_dict())
                 player_id = insert_result.inserted_id
 
             # Create game result
-            result = self.game_results.insert_one({
-                "player_id": player_id,
-                "player_name": player_name,
-                "map_size": map_size,
-                "score": score,
-                "duration": duration,
-                "created_by": self.metadata["user"],
-                "date": self._get_warsaw_time()  # Use Warsaw time
-            })
+            game_result = GameResult(
+                player_name=player_name,
+                map_size=map_size,
+                score=score,
+                duration=duration,
+                player_id=player_id,
+                created_by=self.metadata["user"],
+                date=self._get_warsaw_time()
+            )
 
+            result = self.game_results.insert_one(game_result.to_dict())
             return str(result.inserted_id)
         except Exception as e:
             print(f"Error adding game result: {e}")
             return None
 
-    def get_player_results(self, player_name: str, map_size: Optional[int] = None) -> List[Dict[str, Any]]:
+    def get_player_results(self, player_name: str, map_size: Optional[int] = None) -> List[GameResult]:
         """
         Get all game results for a player.
 
@@ -291,7 +295,7 @@ class Database:
             map_size: If provided, filter results by this map size
 
         Returns:
-            List[Dict]: List of game results for the player
+            List[GameResult]: List of game results for the player
         """
         if not self.is_connected and not self.connect():
             return []
@@ -301,12 +305,8 @@ class Database:
             if map_size is not None:
                 query["map_size"] = map_size
 
-            results = list(self.game_results.find(query).sort("date", -1))
-            # Convert ObjectId to string for JSON serialization
-            for result in results:
-                result["_id"] = str(result["_id"])
-                result["player_id"] = str(result["player_id"])
-            return results
+            results_data = list(self.game_results.find(query).sort("date", -1))
+            return [GameResult.from_dict(result_data) for result_data in results_data]
         except Exception as e:
             print(f"Error getting player results: {e}")
             return []

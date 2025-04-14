@@ -1,5 +1,12 @@
 class Game:
     def __init__(self, board_size=(10, 10), initial_position=None, direction="right"):
+        """
+        Initialize the game with a board size and initial position.
+        Args:
+            board_size (tuple): the size of the game board.
+            initial_position (tuple): the initial position of the snake.
+            direction: the initial direction of the snake.
+        """
         self.board_size = board_size
         width, height = board_size
 
@@ -23,6 +30,9 @@ class Game:
         self.spawn_food()
 
     def update(self):
+        """
+        Update the snake, used in the game loop.
+        """
         if self.game_over:
             return
 
@@ -51,6 +61,9 @@ class Game:
             self.snake.pop()  # Pop if we don't eat anything
 
     def spawn_food(self):
+        """
+        Provides spawning of the food in the random location.
+        """
         width, height = self.board_size
 
         # Create a set of all possible positions
@@ -77,8 +90,13 @@ class Game:
             self.direction = new_direction
 
 
-# Snake movement
 def move_snake(position, direction):
+    """
+    Provides the snake movement logic.
+    Args:
+        position (tuple): the position of the snake.
+        direction (str): the initial direction of the snake.
+    """
     x, y = position
     if direction == "up":
         return (x, y - 1)
@@ -91,18 +109,32 @@ def move_snake(position, direction):
     else:
         raise ValueError(f"Invalid direction: {direction}")
 
-# Shecking collision with any sort of objects
+
 def check_collision(position1, position2):
+    """
+    Checks if two positions collide.
+    Args:
+        position1 (tuple): the position of the one object.
+        position2 (tuple): the position of the other object.
+    """
     return position1 == position2
 
-# Checking if snake is withing the board
+
 def is_within_bounds(position, board_size):
+    """
+    Checks if the snake is within the bounds of the board.
+    Args:
+         position (tuple): the position of the snake.
+         board_size (tuple): the size of the board.
+    """
     x, y = position
     width, height = board_size
     return 0 <= x < width and 0 <= y < height
 
-# Increasing speed with score
 def increase_speed(score):
+    """
+    Provides the speed increased by the food the snake ate.
+    """
     starting_speed = 1
     max_speed = 2
     current_speed = starting_speed + (score // 3) * 0.1

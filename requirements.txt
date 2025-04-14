@@ -1,5 +1,3 @@
-# for UI handling
 pygame~=2.6.1
-
-# for testing
+pymongo~=4.3.3
 pytest~=8.3.5

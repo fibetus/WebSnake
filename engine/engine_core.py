@@ -99,9 +99,9 @@ def move_snake(position, direction):
     """
     x, y = position
     if direction == "up":
-        return (x, y - 1)
-    elif direction == "down":
         return (x, y + 1)
+    elif direction == "down":
+        return (x, y - 1)
     elif direction == "left":
         return (x - 1, y)
     elif direction == "right":

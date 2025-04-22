@@ -306,10 +306,12 @@ class UI:
             # Draw the snake
             for segment in self.game.snake:
                 x, y = segment
+                # Convert game coordinates (Cartesian) to pixel (Pygame)
+                screen_y = (self.grid_size - 1 - y) * self.cell_size
                 # Convert grid coordinates to pixel coordinates
                 rect = pygame.Rect(
                     x * self.cell_size,
-                    y * self.cell_size,
+                    screen_y,
                     self.cell_size,
                     self.cell_size
                 )
@@ -322,7 +324,7 @@ class UI:
             fx, fy = self.game.food
             food_rect = pygame.Rect(
                 fx * self.cell_size,
-                fy * self.cell_size,
+                (self.grid_size - 1 - fy) * self.cell_size,
                 self.cell_size,
                 self.cell_size
             )

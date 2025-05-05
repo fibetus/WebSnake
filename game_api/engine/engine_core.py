@@ -10,11 +10,9 @@ class Game:
         self.board_size = board_size
         width, height = board_size
 
-        # Set default initial position at center if not provided
         if initial_position is None:
             initial_position = (width // 2, height // 2)
 
-        # Make sure initial position is within bounds
         init_x = max(0, min(initial_position[0], width - 1))
         init_y = max(0, min(initial_position[1], height - 1))
         self.snake = [(init_x, init_y)]
@@ -24,9 +22,7 @@ class Game:
         self.game_over = False
         self.speed = 1
 
-        # Initialize food to None
         self.food = None
-        # Spawn food after initializing snake
         self.spawn_food()
 
     def update(self):
@@ -68,11 +64,7 @@ class Game:
 
         # Create a set of all possible positions
         all_positions = set((x, y) for x in range(width) for y in range(height))
-
-        # Create a set of occupied positions (snake segments)
         snake_positions = set(self.snake)
-
-        # Get available positions by removing snake positions from all positions
         available_positions = list(all_positions - snake_positions)
 
         # If there are available positions, choose one randomly
@@ -81,12 +73,13 @@ class Game:
             self.food = random.choice(available_positions)
         else:
             # No available positions, game won
+            self.food = None
             self.game_over = True
 
     # Checking if we don't change direction into snake body
     def change_direction(self, new_direction):
         opposites = {"up": "down", "down": "up", "left": "right", "right": "left"}
-        if new_direction != opposites.get(self.direction):
+        if len(self.snake) <= 1 or new_direction != opposites.get(self.direction):
             self.direction = new_direction
 
 

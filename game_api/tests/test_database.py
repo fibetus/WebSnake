@@ -3,8 +3,8 @@ from unittest import mock
 import mongomock
 import datetime
 
-from data.database import Database
-from data.models import Player, GameResult
+from snake_project.game_api.data.database import Database
+from snake_project.game_api.data.models import Player, GameResult
 
 
 @pytest.fixture(scope="function")

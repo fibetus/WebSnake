@@ -1,7 +1,7 @@
 import pygame
 import sys
 import time
-from engine import Game
+from game_api.engine import Game
 
 
 class UI:

@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Optional
 import time
-from .database import db
+from game_api.database import db
 
 
 class PlayerData:

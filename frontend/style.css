@@ -1,0 +1,77 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+#setup-screen, #game-screen {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    text-align: center;
+}
+
+#setup-screen div {
+    margin-bottom: 15px;
+}
+
+#setup-screen label {
+    display: inline-block;
+    width: 130px;
+    text-align: right;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+#setup-screen input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#start-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+#start-button:hover {
+    background-color: #45a049;
+}
+
+#game-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+#game-canvas {
+    border: 1px solid #333;
+    background-color: #000; /* Black background for the game area */
+    display: block; /* Remove extra space below canvas */
+    margin: 0 auto; /* Center canvas */
+}
+
+#game-over-message {
+    margin-top: 20px;
+    color: red;
+    font-weight: bold;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 10px;
+}

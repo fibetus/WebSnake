@@ -2,9 +2,9 @@ import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime
 
-from data.models import Player, GameResult
-from data.database import db
-from data.player_data import PlayerData
+from snake_project.game_api.data.models import Player, GameResult
+from snake_project.game_api.data.database import db
+from snake_project.game_api.data.player_data import PlayerData
 
 
 @pytest.fixture
@@ -86,7 +86,7 @@ def cleanup_after_all_tests():
     # Clean up real database if any test accidentally connected to it
     try:
         # Try to get a real connection and clean up test data
-        from data.database import Database
+        from snake_project.game_api.data.database import Database
         cleanup_db = Database()
         if cleanup_db.connect():
             print("Cleaning up any test data from real database...")

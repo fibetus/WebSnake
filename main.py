@@ -1,6 +1,6 @@
 import argparse
-from ui import UI
-from data import PlayerData
+from game_api.pygame_ui import UI
+from game_api.data import PlayerData
 
 
 def main():

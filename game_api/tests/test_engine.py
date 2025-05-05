@@ -1,5 +1,5 @@
 import pytest
-from snake_project.game_api.engine import move_snake, check_collision, is_within_bounds, increase_speed, Game
+from game_api.engine import move_snake, check_collision, is_within_bounds, increase_speed, Game
 
 # move_snake tests:
 def test_move_snake_up():

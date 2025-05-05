@@ -84,7 +84,6 @@ function drawBoard(state) {
     const gridWidth = boardSize[0];
     const gridHeight = boardSize[1];
 
-    // Calculate cell size to fit canvas (e.g., max 500px width/height)
     const maxCanvasWidth = 500;
     const maxCanvasHeight = 500;
     cellSize = Math.min(Math.floor(maxCanvasWidth / gridWidth), Math.floor(maxCanvasHeight / gridHeight));
@@ -129,9 +128,7 @@ function drawBoard(state) {
 
 // Function to fetch and update game state
 async function pollGameState() {
-    // Stop polling if the game becomes inactive *during* polling
     if (!gameActive) {
-        // We only stop the *timer* here, not the listener
         if (pollingIntervalId) {
             clearInterval(pollingIntervalId);
             pollingIntervalId = null;
@@ -143,7 +140,6 @@ async function pollGameState() {
     try {
         const currentState = await getData(`${API_BASE_URL}/game/state`);
 
-        // Check if game is still active *after* getting state (could have changed)
         if (!gameActive) return;
 
         drawBoard(currentState);
@@ -151,8 +147,7 @@ async function pollGameState() {
 
         if (currentState.game_over) {
             console.log("Game Over! Score:", currentState.score);
-            gameActive = false; // Mark game as inactive
-            // Only stop the polling *timer*. The listener stays active for 'R'.
+            gameActive = false;
             if (pollingIntervalId) {
                  clearInterval(pollingIntervalId);
                  pollingIntervalId = null;
@@ -164,12 +159,10 @@ async function pollGameState() {
             gameOverMessage.style.display = 'block';
 
         } else {
-            // Game is active and not over, polling continues via setInterval
         }
     } catch (error) {
         console.error('Error polling game state:', error);
-        gameActive = false; // Mark game as inactive on error
-        // Only stop the polling *timer*. The listener stays active for 'R'.
+        gameActive = false;
         if (pollingIntervalId) {
              clearInterval(pollingIntervalId);
              pollingIntervalId = null;
@@ -186,7 +179,6 @@ async function pollGameState() {
 
 // Function to start polling
 function startPolling() {
-    // Clear any previous interval *before* starting a new one
     if (pollingIntervalId) {
         clearInterval(pollingIntervalId);
         pollingIntervalId = null;
@@ -196,8 +188,6 @@ function startPolling() {
     gameOverMessage.style.display = 'none'; // Hide game over message
     setupErrorElement.textContent = ''; // Clear any previous errors
 
-    // Attach the key listener *if it's not already active*
-    // This ensures it's only added once per game session
     if (!isKeyListenerActive) {
         document.addEventListener('keydown', handleKeydown);
         isKeyListenerActive = true;
@@ -208,14 +198,12 @@ function startPolling() {
     pollingIntervalId = setInterval(pollGameState, POLLING_INTERVAL_MS); // Poll repeatedly
 }
 
-// Function to stop polling *timer* (listener remains)
 function stopPollingTimer() {
     if (pollingIntervalId) {
         clearInterval(pollingIntervalId);
         pollingIntervalId = null;
         console.log("Polling interval stopped.");
     }
-    // Do NOT remove the keydown listener here anymore
 }
 
 
@@ -223,7 +211,6 @@ function stopPollingTimer() {
 
 // Keyboard listener (Handles keys regardless of polling state)
 async function handleKeydown(event) {
-    // --- Restart Logic (Works even if gameActive is false) ---
     if (event.key.toLowerCase() === 'r') {
         event.preventDefault(); // Prevent default 'R' behavior
         if (!currentUsername) {
@@ -233,7 +220,6 @@ async function handleKeydown(event) {
         }
 
         console.log('R key pressed. Attempting to restart game...');
-        // Stop any potentially running *timer* before restarting
         stopPollingTimer();
         gameActive = false; // Ensure game is marked inactive before restart attempt
 
@@ -263,9 +249,7 @@ async function handleKeydown(event) {
         return; // Don't process movement keys if 'R' was pressed
     }
 
-    // --- Movement Logic (Only process if gameActive is true) ---
     if (!gameActive) {
-        // console.log("Movement key ignored: game not active."); // Optional log
         return;
     }
 
@@ -307,7 +291,6 @@ startButton.addEventListener('click', async () => {
     }
 
     console.log(`Attempting to start game for ${username} with size ${mapSize}`);
-    // Stop any previous polling timer and mark game inactive before starting
     stopPollingTimer();
     gameActive = false;
 
@@ -328,13 +311,12 @@ startButton.addEventListener('click', async () => {
         scoreElement.textContent = initialState.score;
 
         drawBoard(initialState);
-        startPolling(); // Start polling and attach listener (if not already attached)
+        startPolling();
 
     } catch (error) {
         console.error("Failed to start game:", error);
         setupErrorElement.textContent = `Failed to start game: ${error.message || error}`;
-        gameActive = false; // Ensure game stays inactive
-        // Don't start polling on failure
+        gameActive = false;
     }
 });
 
@@ -344,8 +326,7 @@ function initializeUI() {
     gameScreen.style.display = 'none';
     gameOverMessage.style.display = 'none';
     gameActive = false;
-    stopPollingTimer(); // Ensure no timer is running initially
-    // Remove listener on full page load/reset if it was somehow left attached
+    stopPollingTimer();
     if (isKeyListenerActive) {
         document.removeEventListener('keydown', handleKeydown);
         isKeyListenerActive = false;

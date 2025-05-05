@@ -34,9 +34,23 @@ pip install -r requirements.txt
 
 ## How to Run
 
-Run the game with:
+Run the game as an app with:
 ```bash
 python main.py
+```
+Run the game in the web with:
+- In first terminal:
+```bash
+python manage.py runserver
+```
+- In second terminal:
+```bash
+cd frontend
+python -m http.server <port>
+```
+- Open your browser and type:
+```bash
+localhost:<port>
 ```
 
 ## Run with Arguments
@@ -52,18 +66,18 @@ python main.py
    ```
 - Run with `--map-size` flag to get filtered leaderboard by map size you write. 
 
-   - Use with `--scores` flag. 
-   - The argument after `--map-size` should be an integer between 5-25.
-
    ```bash
    python main.py --scores --map-size [0-25]
    ```
+   - Use with `--scores` flag. 
+   - The argument after `--map-size` should be an integer between 5-25.
+
 
 ## Controls
 
 - **Arrow Keys / WSAD**: Control the snake's direction
 - **R**: Restart the game after game over
-- **Q**: Quit the game
+- **Q**: Quit the game (only in app)
 
 ## Game Rules
 
@@ -72,22 +86,6 @@ python main.py
 3. The game ends if the snake:
    - Hits the wall (goes beyond the grid)
    - Collides with its own body
-
-## Project Structure
-
-- `data`
-  - `player_data.py`: Contains the logic for saving data
-  - `models.py`: Contains data models for database use
-  - `database.py`: Contains database logic and CRUD operations
-- `engine`
-  - `engine_core.py`: Contains the core game logic
-- `tests`
-  - `test_engine.py`: Contains tests for `engine_core.py`
-  - `test_player_data.py`: Contains tests for `player_data.py`
-  - `test_database.py`: Contains tests for `database.py`
-- `ui`
-  - `ui.py`: Contains the Pygame user interface implementation
-- `main.py`: Entry point that connects game logic with UI
 
 ## Testing
 
@@ -98,7 +96,7 @@ pytest
 
 ## Development
 
-This project follows TDD and a modular design pattern, separating the game logic from the UI implementation. This makes it easy to:
+This project follows TDD and a modular design pattern, separating the game logic from the UI implementation. Now we also have Django implementation! This makes it easy to:
 
 1. Extend the game with new features
 2. Test the game logic independently

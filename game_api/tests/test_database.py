@@ -3,8 +3,12 @@ from unittest import mock
 import mongomock
 import datetime
 
-from snake_project.game_api.data.database import Database
-from snake_project.game_api.data.models import Player, GameResult
+from game_api.database import Database
+from game_api.models import Player, GameResult
+
+###
+### PLEASE DON"T USE FOR NOW, CLEANUP DOESN'T WORK PROPERLY
+###
 
 
 @pytest.fixture(scope="function")

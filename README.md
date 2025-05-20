@@ -94,6 +94,22 @@ Run the tests with:
 pytest
 ```
 
+## CI/CD Pipeline – GitHub Actions
+
+Repository contains CI/CD pipeline running at every push or pull on branch `main`.
+
+### Badge
+
+![CI](https://github.com/PPY-2025/s30331-python-game/actions/workflows/ci.yml/badge.svg)
+
+```yaml
+runs-on: self-hosted
+```
+### To run the self-hosted, at runner machine in Windows PowerShell use:
+```bash
+./run.cmd
+```
+
 ## Development
 
 This project follows TDD and a modular design pattern, separating the game logic from the UI implementation. Now we also have Django implementation! This makes it easy to:

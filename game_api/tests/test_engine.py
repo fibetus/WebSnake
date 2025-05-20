@@ -131,12 +131,15 @@ def test_change_direction_valid():
 def test_change_direction_invalid():
     """
     Check if the snake's direction doesn't change when trying to reverse direction.
-    Should prevent changing from down to up (opposite directions) for gameplay reasons.
+    Should prevent changing from right to left (opposite directions) for gameplay reasons.
     """
     g = Game()
-    g.direction = "down"
-    g.change_direction("up")
-    assert g.direction == "down"
+    g.food = (6, 5)
+    g.direction = "right"
+    g.update()
+    g.change_direction("left")
+    assert g.direction == "right"
+    assert g.score == 1
 
 
 # update tests:

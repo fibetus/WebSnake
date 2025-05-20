@@ -486,3 +486,5 @@ class TestPlayerData:
 
         # Should return empty list
         assert result == []
+
+# test for self-hosted

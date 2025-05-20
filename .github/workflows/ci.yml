@@ -24,7 +24,5 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Krok 4: Uruchomienie testów
-      # Zakładamy, że używasz pytest. Jeśli używasz innego narzędzia, zmień komendę.
       - name: Run tests
-        run: pytest
+        run: python -m pytest

@@ -67,7 +67,7 @@ localhost:<port>
 - Run with `--map-size` flag to get filtered leaderboard by map size you write. 
 
    ```bash
-   python main.py --scores --map-size [0-25]
+   python main.py --scores --map-size [5-25]
    ```
    - Use with `--scores` flag. 
    - The argument after `--map-size` should be an integer between 5-25.
@@ -92,6 +92,22 @@ localhost:<port>
 Run the tests with:
 ```bash
 pytest
+```
+
+## CI/CD Pipeline – GitHub Actions
+
+Repository contains CI/CD pipeline running at every push or pull on branch `main`.
+
+### Badge
+
+![CI](https://github.com/PPY-2025/s30331-python-game/actions/workflows/ci.yml/badge.svg)
+
+```yaml
+runs-on: self-hosted
+```
+### To run the self-hosted, at runner machine in Windows PowerShell use:
+```bash
+./run.cmd
 ```
 
 ## Development

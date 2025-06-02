@@ -67,7 +67,7 @@ localhost:<port>
 - Run with `--map-size` flag to get filtered leaderboard by map size you write. 
 
    ```bash
-   python main.py --scores --map-size [0-25]
+   python main.py --scores --map-size [5-25]
    ```
    - Use with `--scores` flag. 
    - The argument after `--map-size` should be an integer between 5-25.

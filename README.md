@@ -1,4 +1,4 @@
-# s30331-python-game
+# WebSnake 
 
 # Snake Game
 

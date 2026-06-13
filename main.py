@@ -41,14 +41,10 @@ def main():
         print("=======================\n")
         return
 
-    # Create UI without a game instance yet (we'll create it after setup)
-    ui = UI()
 
     # Show setup scene first
     ui.show_setup_scene(player_data)
 
-    # Start the main game (the game instance is created during setup)
-    ui.start()
 
 
 if __name__ == '__main__':

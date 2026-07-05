@@ -1,6 +1,4 @@
-# WebSnake 
-
-# Snake Game
+# WebSnake
 
 A classic Snake game implementation in Python.
 

@@ -7,7 +7,6 @@
 
 
 
-'''
 import pytest
 from unittest import mock
 import mongomock
@@ -15,7 +14,7 @@ import datetime
 
 @pytest.fixture(scope="session", autouse=True)
 def patch_mongo_client():
-    with mock.patch('pymongo.MongoClient', mongomock.MongoClient):
+    with mock.patch('game_api.database.MongoClient', mongomock.MongoClient):
         yield
 
 
@@ -30,7 +29,7 @@ def mock_db():
     Create a mock database for testing.
     """
     # Create a patcher to replace the MongoClient with mongomock
-    with mock.patch('pymongo.MongoClient', mongomock.MongoClient):
+    with mock.patch('game_api.database.MongoClient', mongomock.MongoClient):
         test_db = Database()
 
         # Mock the _get_warsaw_time method to return a consistent time for testing
@@ -66,46 +65,7 @@ def mock_db():
         test_db._get_warsaw_time = original_get_time
 
 
-# Clean up real database after all tests (in case real connection was used). Just another layer of protection.
-@pytest.fixture(scope="session", autouse=True)
-def cleanup_real_database():
-    """
-    Clean up any data created in the real database during tests.
-    """
-    yield  # Run all tests
 
-    # After all tests, connect to real database and clean up test data
-    try:
-        cleanup_db = Database()
-        if cleanup_db.connect():
-            print("Cleaning up test data from real database...")
-            # Delete all test data using a filter that identifies test data
-            if cleanup_db.players is not None:
-                cleanup_db.players.delete_many({
-                    "$or": [
-                        {"name": {"$regex": "^Test"}},
-                        {"name": {"$in": ["Player1", "Player2", "Player3", "Player4",
-                                          "UpdateTest", "DeleteTest1", "DeleteTest2",
-                                          "ResultsPlayer", "ExistingPlayer", "NewPlayer"]}},
-                        {"created_by": "testUser"}  # Delete all data created by our test user
-                    ]
-                })
-
-            if cleanup_db.game_results is not None:
-                cleanup_db.game_results.delete_many({
-                    "$or": [
-                        {"player_name": {"$regex": "^Test"}},
-                        {"player_name": {"$in": ["Player1", "Player2", "Player3", "Player4",
-                                                 "UpdateTest", "DeleteTest1", "DeleteTest2",
-                                                 "ResultsPlayer", "ExistingPlayer", "NewPlayer"]}},
-                        {"created_by": "testUser"}  # Delete all data created by our test user
-                    ]
-                })
-
-            cleanup_db.disconnect()
-            print("Test data cleanup complete.")
-    except Exception as e:
-        print(f"Warning: Could not clean up test data: {e}")
 
 
 class TestConnectionHandling:
@@ -465,4 +425,3 @@ class TestGameResultsCRUD:
         # Confirm sorted by date (newest first)
         if len(results) >= 2:
             assert results[0].date >= results[1].date
-'''

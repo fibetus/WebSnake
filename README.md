@@ -23,8 +23,8 @@ This is a simple implementation of the classic Snake game where you control a sn
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/fibetus/s30331-python-game.git
-cd s30331-python-game
+git clone https://github.com/fibetus/WebSnake.git
+cd WebSnake
 ```
 
 2. Install the required dependencies:
@@ -124,3 +124,7 @@ This project follows TDD and a modular design pattern, separating the game logic
 - @fibetus
 
 ---
+
+## License
+
+Educational project - all rights reserved. It was developed for the 2024/2025 PPY course at PJAIT.
